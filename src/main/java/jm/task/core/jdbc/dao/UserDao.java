@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface UserDao {
     void createUsersTable();
+//    String =
 
     void dropUsersTable();
 
@@ -16,4 +17,5 @@ public interface UserDao {
     List<User> getAllUsers();
 
     void cleanUsersTable();
+
 }
