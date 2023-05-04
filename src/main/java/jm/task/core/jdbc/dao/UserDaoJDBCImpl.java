@@ -11,12 +11,12 @@ import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
 //    private static final ; //Connection с помощью статического метода класса Util, который находится в пакете util. Задача классов из этого пакета – непосредственно конфигурировать соединение с базой
-
+    Connection connection = Util.getConnection();
     public UserDaoJDBCImpl() {
     }
 
     public void createUsersTable() {      //создание табл
-        try (Connection connection = Util.getConnection(); Statement statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS users " +
                     "(id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL, name VARCHAR(255), last_name VARCHAR(255), age TINYINT)");
         } catch (SQLException e) {
@@ -25,7 +25,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {                                    //Удаление таблицы User(ов)
-        try (Connection connection = Util.getConnection(); Statement statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute("DROP TABLE IF EXISTS users");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -33,7 +33,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {    //Сохранение пользователя
-        try (Connection connection = Util.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement("INSERT INTO users(name, last_name, age) VALUES (?, ?, ?)")) {
+        try (PreparedStatement prepareStatement = connection.prepareStatement("INSERT INTO users(name, last_name, age) VALUES (?, ?, ?)")) {
             prepareStatement.setString(1, name);
             prepareStatement.setString(2, lastName);
             prepareStatement.setByte(3, age);
@@ -45,7 +45,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {    //Удаляет user из таблицы по ID
-        try (Connection connection = Util.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement("DELETE FROM users WHERE id = ?")) {
+        try (PreparedStatement prepareStatement = connection.prepareStatement("DELETE FROM users WHERE id = ?")) {
             prepareStatement.setLong(1, id);
             prepareStatement.executeUpdate();
         } catch (SQLException e) {
@@ -55,7 +55,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public List<User> getAllUsers() {                         //Получает список всех user
         List<User> userList = new ArrayList<>();
-        try (Connection connection = Util.getConnection(); Statement statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery("select * from users");
             while (resultSet.next()) {
                 User user = new User();
@@ -72,7 +72,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() {                         //очистка содержания табл
-        try (Connection connection = Util.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement("TRUNCATE test.users")) {
+        try (PreparedStatement prepareStatement = connection.prepareStatement("TRUNCATE test.users")) {
             prepareStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
